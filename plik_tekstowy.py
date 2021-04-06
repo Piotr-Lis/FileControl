@@ -1,0 +1,6 @@
+'''komentarzfuck ''
+dupa
+kurde
+
+
+
