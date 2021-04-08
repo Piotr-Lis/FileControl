@@ -5,48 +5,59 @@ class BadWord(Control):
 
     def __init__(self):
         self.bad_words = ['dupa', 'kurde', 'fuck']
-        self.status = True
-        self.error = []
 
     def __repr__(self):
         return 'BadWord'
 
-    def control(self, lines):
-        for line in lines:
+    def control(self, file, met='r'):
+        status = True
+        errors = []
+        i = 0
+        for line in self.read_lines(file, met):
+            i += 1
             for word in self.bad_words:
                 if word in line:
-                    self.status = False
-                    self.error.append({'line': lines.index(line)+1, 'error': f'"{word}" found.'})
-        return {'status': self.status, 'errors': tuple(self.error)}
+                    status = False
+                    errors.append({'line': i, 'error': f'"{word}" found.'})
+        if status:
+            return '"BadWord"  test PASSED.'
+        else:
+            return {'status': status, 'errors': tuple(errors)}
 
 
 class Comment(Control):
 
     def __init__(self):
-        self.status = True
-        self.error = None
+        pass
 
     def __repr__(self):
         return 'Comment'
 
-    def control(self, lines):
-        if not (lines[0][0:3] == "'''" and (lines[0][-4:] == "'''\n" or lines[0][-3:] == "'''")):
-            self.status = False
-            self.error = 'Comment not found'
-        return {'status': self.status, 'errors': self.error}
+    def control(self, file, met='r'):
+        status = True
+        error = None
+        line = self.read_lines(file)[0]
+        if not (line[0:3] == "'''" and (line[-4:] == "'''\n" or line[-3:] == "'''")):
+            status = False
+            error = 'Comment not found'
+            return {'status': status, 'errors': error}
+        return '"Comment"  test PASSED'
 
 
 class LastLine(Control):
 
     def __init__(self):
-        self.status = True
-        self.error = None
+        pass
 
     def __repr__(self):
         return 'LastLine'
 
-    def control(self, lines):
-        if not lines[-1][-1] == '\n' or lines[-1] == '\n':
-            self.status = False
-            self.error = 'No or too many empty line(s) at the end.'
-        return {'status': self.status, 'errors': self.error}
+    def control(self, file, met='r'):
+        status = True
+        error = None
+        line = self.read_lines(file)[-1]
+        if not line[-1] == '\n' or line == '\n':
+            status = False
+            error = 'No or too many empty line(s) at the end.'
+            return {'status': status, 'errors': error}
+        return '"LastLine" test PASSED.'

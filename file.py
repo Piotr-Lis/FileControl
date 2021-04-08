@@ -1,3 +1,6 @@
+import os
+
+
 class FileType(Exception):
     pass
 
@@ -5,7 +8,7 @@ class FileType(Exception):
 class File(object):
 
     def __init__(self, file_name, method):
-        if file_name[-2:] != 'py' and file_name[-4:] != 'json':
+        if os.path.splitext(file_name)[1] not in ['.py', '.json']:
             raise FileType('Wrong file. Only .py and .json file is allowed.')
         self.file_obj = None
         self.file_name = file_name

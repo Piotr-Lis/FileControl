@@ -1,6 +1,3 @@
-'''komentarzfuck ''
+''komentarzfuck '''
 dupa
 kurde
-
-
-
