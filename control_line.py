@@ -8,4 +8,3 @@ class ControlLine:
 
     def add_controler(self, controler):
         self.controlers.append(controler)
-

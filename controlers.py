@@ -10,19 +10,13 @@ class BadWord(Control):
         return 'BadWord'
 
     def control(self, file, met='r'):
-        status = True
         errors = []
-        i = 0
-        for line in self.read_lines(file, met):
-            i += 1
-            for word in self.bad_words:
-                if word in line:
-                    status = False
-                    errors.append({'line': i, 'error': f'"{word}" found.'})
-        if status:
+        for lnum, line in enumerate(self.read_lines(file, met)):
+            errors += [{'line': lnum+1, 'error': f'"{word}" found.'} for word in self.bad_words if word in line]
+        if not errors:
             return '"BadWord"  test PASSED.'
         else:
-            return {'status': status, 'errors': tuple(errors)}
+            return {'status': not errors, 'errors': tuple(errors)}
 
 
 class Comment(Control):
@@ -34,13 +28,10 @@ class Comment(Control):
         return 'Comment'
 
     def control(self, file, met='r'):
-        status = True
-        error = None
         line = self.read_lines(file)[0]
         if not (line[0:3] == "'''" and (line[-4:] == "'''\n" or line[-3:] == "'''")):
-            status = False
             error = 'Comment not found'
-            return {'status': status, 'errors': error}
+            return {'status': False, 'errors': error}
         return '"Comment"  test PASSED'
 
 
@@ -53,11 +44,8 @@ class LastLine(Control):
         return 'LastLine'
 
     def control(self, file, met='r'):
-        status = True
-        error = None
         line = self.read_lines(file)[-1]
         if not line[-1] == '\n' or line == '\n':
-            status = False
             error = 'No or too many empty line(s) at the end.'
-            return {'status': status, 'errors': error}
+            return {'status': False, 'errors': error}
         return '"LastLine" test PASSED.'
