@@ -11,7 +11,8 @@ class BadWord(Control):
 
     def control(self, file, met='r'):
         errors = []
-        for lnum, line in enumerate(self.read_lines(file, met)):
+        file_gen = self.file_gen(file, met)
+        for lnum, line in enumerate(file_gen):
             errors += [{'line': lnum+1, 'error': f'"{word}" found.'} for word in self.bad_words if word in line]
         if not errors:
             return '"BadWord"  test PASSED.'
@@ -28,7 +29,8 @@ class Comment(Control):
         return 'Comment'
 
     def control(self, file, met='r'):
-        line = self.read_lines(file)[0]
+        file_gen = self.file_gen(file, met)
+        line = next(file_gen)
         if not (line[0:3] == "'''" and (line[-4:] == "'''\n" or line[-3:] == "'''")):
             error = 'Comment not found'
             return {'status': False, 'errors': error}
@@ -43,8 +45,18 @@ class LastLine(Control):
     def __repr__(self):
         return 'LastLine'
 
+    @staticmethod
+    def last_line(gnrt):
+        line = ''
+        while True:
+            try:
+                line = next(gnrt)
+            except:
+                return line
+
     def control(self, file, met='r'):
-        line = self.read_lines(file)[-1]
+        file_gen = self.file_gen(file, met)
+        line = self.last_line(file_gen)
         if not line[-1] == '\n' or line == '\n':
             error = 'No or too many empty line(s) at the end.'
             return {'status': False, 'errors': error}

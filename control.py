@@ -12,9 +12,7 @@ class Control(ABC):
     def control(self, file, met='r'):
         pass
 
-    def read_lines(self, file, met='r'):
+    def file_gen(self, file, met='r'):
         with File(file, met) as file:
-            lines = file.readlines()
-        if not lines:
-            raise EmptyFile('File is empty.')
-        return lines
+            for line in file:
+                yield line
